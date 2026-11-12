@@ -22,8 +22,12 @@ object KeyboardTypeface {
     private var emojiTypefaceLoaded = false
 
     private fun loadCustomTypeface(context: Context): Typeface? {
-        return runCatching {
+        val propia = runCatching {
             Typeface.createFromFile(Settings.getCustomFontFile(context))
+        }.getOrNull()
+        // Teclado: si no se ha elegido fuente propia, se usa Nunito (la de las apps)
+        return propia ?: runCatching {
+            androidx.core.content.res.ResourcesCompat.getFont(context, helium314.keyboard.latin.R.font.nunito_normal)
         }.getOrNull()
     }
 

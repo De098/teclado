@@ -512,7 +512,8 @@ public class KeyboardView extends View {
                 // The hint letter is placed at top-right corner of the key. Used mainly on phone.
                 final float hintDigitWidth = TypefaceUtils.getReferenceDigitWidth(paint);
                 final float hintLabelWidth = TypefaceUtils.getStringWidth(hintLabel, paint);
-                hintBaseline = -paint.ascent();
+                // Teclado: medio margen hacia abajo para que no pegue al borde de arriba
+                hintBaseline = -paint.ascent() + mKeyHintLetterPadding * 0.5f;
                 hintX = isFunctionalKeyAndRoundedStyle
                         ? keyWidth - hintBaseline
                         : keyWidth - mKeyHintLetterPadding - Math.max(hintDigitWidth, hintLabelWidth) / 2.0f;
