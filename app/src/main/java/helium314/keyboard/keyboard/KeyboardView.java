@@ -40,6 +40,7 @@ import helium314.keyboard.latin.common.StringUtilsKt;
 import helium314.keyboard.latin.settings.Settings;
 import helium314.keyboard.latin.suggestions.MoreSuggestions;
 import helium314.keyboard.latin.suggestions.MoreSuggestionsView;
+import helium314.keyboard.keyboard.internal.KeyboardIconsSet;
 import helium314.keyboard.latin.utils.TypefaceUtils;
 
 import java.util.HashSet;
@@ -103,6 +104,8 @@ public class KeyboardView extends View {
     private final boolean mDrawKeyOutline;
     private final Paint mOutlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF mOutlineRect = new RectF();
+    private final Paint mActionFillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mActionOutlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float mOutlineRadius;
 
     public KeyboardView(final Context context, final AttributeSet attrs) {
@@ -117,6 +120,8 @@ public class KeyboardView extends View {
         mOutlinePaint.setColor(0xFF78858F);
         mOutlinePaint.setStrokeWidth(1.5f * density);
         mOutlineRadius = 8f * density;
+        mActionOutlinePaint.setStyle(Paint.Style.STROKE);
+        mActionOutlinePaint.setColor(0xFF3584E4);
         mDrawKeyOutline = KeyboardTheme.getKeyboardTheme(context).mStyleId == R.style.KeyboardTheme_LXX_Base_Border
                 && !(this instanceof MoreSuggestionsView) && !(this instanceof PopupKeysKeyboardView);
 
@@ -384,6 +389,17 @@ public class KeyboardView extends View {
         }
         background.setBounds(0, 0, bgWidth, bgHeight);
         canvas.translate(bgX, bgY);
+        if (mDrawKeyOutline && key.hasActionKeyBackground() && !(this instanceof PopupKeysKeyboardView)) {
+            // Teclado: tecla de acción como la lupa seleccionada de Recordatorios: fondo azul clarito y borde azul
+            final float half = mOutlinePaint.getStrokeWidth() / 2f;
+            mOutlineRect.set(half, half, bgWidth - half, bgHeight - half);
+            mActionFillPaint.setColor(key.isPressed() ? 0xFFCFDFF6 : 0xFFE6EFFB);
+            canvas.drawRoundRect(mOutlineRect, mOutlineRadius, mOutlineRadius, mActionFillPaint);
+            mActionOutlinePaint.setStrokeWidth(mOutlinePaint.getStrokeWidth());
+            canvas.drawRoundRect(mOutlineRect, mOutlineRadius, mOutlineRadius, mActionOutlinePaint);
+            canvas.translate(-bgX, -bgY);
+            return;
+        }
         background.draw(canvas);
         if (mDrawKeyOutline) {
             final float half = mOutlinePaint.getStrokeWidth() / 2f;
@@ -447,6 +463,8 @@ public class KeyboardView extends View {
             if (key.isEnabled()) {
                 if (StringUtilsKt.isEmoji(label))
                     paint.setColor(key.selectTextColor(params) | 0xFF000000); // ignore alpha for emojis (though actually color isn't applied anyway and we could just set white)
+                else if (key.hasActionKeyBackground() && mDrawKeyOutline && !(this instanceof PopupKeysKeyboardView))
+                    paint.setColor(0xFF3584E4); // Teclado: texto azul sobre el fondo azul clarito
                 else if (key.hasActionKeyBackground())
                     paint.setColor(mColors.get(ColorType.ACTION_KEY_ICON));
                 else if (this instanceof EmojiPageKeyboardView)
@@ -657,7 +675,16 @@ public class KeyboardView extends View {
     }
 
     private void setKeyIconColor(Key key, Drawable icon, Keyboard keyboard) {
-        if (key.hasActionKeyBackground()) {
+        if (key.hasActionKeyBackground() && mDrawKeyOutline && !(this instanceof PopupKeysKeyboardView)) {
+            // Teclado: la lupa lleva sus propios colores; los demás iconos de acción en gris como sus contornos
+            if (KeyboardIconsSet.NAME_SEARCH_KEY.equals(key.getIconName())) {
+                icon.setColorFilter(null);
+                icon.setTintList(null);
+            } else {
+                icon.setTintList(null);
+                icon.setColorFilter(new android.graphics.PorterDuffColorFilter(0xFF78858F, android.graphics.PorterDuff.Mode.SRC_IN));
+            }
+        } else if (key.hasActionKeyBackground()) {
             mColors.setColor(icon, ColorType.ACTION_KEY_ICON);
         } else if (key.isShift() && keyboard != null) {
             if (keyboard.mId.getElement().isAlphabetShifted())

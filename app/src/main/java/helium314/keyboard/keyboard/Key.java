@@ -844,6 +844,11 @@ public class Key implements Comparable<Key> {
         mPressed = false;
     }
 
+    // Teclado: para pintar a mano la tecla de acción pulsada
+    public boolean isPressed() {
+        return mPressed;
+    }
+
     public final boolean isEnabled() {
         return mEnabled;
     }
