@@ -13,8 +13,8 @@ android {
         applicationId = "io.github.de098.teclado"
         minSdk = 21
         targetSdk = 37
-        versionCode = 4201
-        versionName = "4.2"
+        versionCode = 1
+        versionName = "0.1"
         ndk {
             abiFilters.clear()
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
@@ -66,7 +66,7 @@ android {
             }
             variant.outputs.forEach { output ->
                 if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                    output.outputFileName = "HeliBoard_${defaultConfig.versionName}-${variant.buildType}.apk"
+                    output.outputFileName = "Teclado_${defaultConfig.versionName}-${variant.buildType}.apk"
                 }
             }
         }
