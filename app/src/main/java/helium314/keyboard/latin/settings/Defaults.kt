@@ -88,7 +88,7 @@ object Defaults {
     @JvmField
     val PREF_SPLIT_SPACER_SCALE = Array(4) { DEFAULT_SIZE_SCALE }
     @JvmField
-    val PREF_KEYBOARD_HEIGHT_SCALE = Array(4) { DEFAULT_SIZE_SCALE }
+    val PREF_KEYBOARD_HEIGHT_SCALE = Array(4) { 0.8f } // 80 %: tamaño de Gboard
     @JvmField
     val PREF_BOTTOM_ROW_SCALE = Array(4) { DEFAULT_SIZE_SCALE }
     @JvmField
