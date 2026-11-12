@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Icono de Teclado (opción C «Escribiendo»): campo de texto (todo el ancho) con cursor azul y el teclado debajo -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+  <!-- reducido al 80 % para que mida lo mismo que Cartera y Recordatorios -->
+  <group android:pivotX="54" android:pivotY="54" android:scaleX="0.8" android:scaleY="0.8">
   <path android:pathData="M28,22H80A6,6 0 0 1 86,28V42A6,6 0 0 1 80,48H28A6,6 0 0 1 22,42V28A6,6 0 0 1 28,22Z" android:fillColor="#FFE3E7EB" android:strokeColor="#FF9AA4AD" android:strokeWidth="3.5"/>
   <path android:pathData="M31,35 H64" android:strokeColor="#FF81D4FA" android:strokeWidth="3.6" android:strokeLineCap="round"/>
   <path android:pathData="M71,29.5 V40.5" android:strokeColor="#FF29B6F6" android:strokeWidth="3.4" android:strokeLineCap="round"/>
   <path android:pathData="M28,46H80A6,6 0 0 1 86,52V78A6,6 0 0 1 80,84H28A6,6 0 0 1 22,78V52A6,6 0 0 1 28,46Z" android:fillColor="#FFFFFFFF" android:strokeColor="#FF78858F" android:strokeWidth="3.5"/>
   <path android:pathData="M31,57 h4 M40,57 h4 M49,57 h4 M58,57 h4 M67,57 h4 M76,57 h1 M35,66 h4 M44,66 h4 M53,66 h4 M62,66 h4 M40,75 H60" android:strokeColor="#FF81D4FA" android:strokeWidth="3.6" android:strokeLineCap="round"/>
   <path android:pathData="M68,70.5H75A2,2 0 0 1 77,72.5V77.5A2,2 0 0 1 75,79.5H68A2,2 0 0 1 66,77.5V72.5A2,2 0 0 1 68,70.5Z" android:fillColor="#FF29B6F6"/>
+  </group>
 </vector>
