@@ -49,9 +49,9 @@ object Defaults {
     const val PREF_ACCENT_SHIFTED_ICON = false
     const val PREF_THEME_COLORS = KeyboardTheme.THEME_LIGHT
     const val PREF_THEME_COLORS_NIGHT = KeyboardTheme.THEME_DARK
-    const val PREF_THEME_KEY_BORDERS = false
+    const val PREF_THEME_KEY_BORDERS = true
     @JvmField
-    val PREF_THEME_DAY_NIGHT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    val PREF_THEME_DAY_NIGHT = false
     const val PREF_CUSTOM_ICON_NAMES = ""
     const val PREF_TOOLBAR_CUSTOM_KEY_CODES = ""
     const val PREF_AUTO_CAP = true

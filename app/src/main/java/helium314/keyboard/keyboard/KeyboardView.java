@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.PorterDuff;
+import android.graphics.RectF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -98,6 +99,11 @@ public class KeyboardView extends View {
     @NonNull
     private final Paint mPaint = new Paint();
     private final Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
+    // Contorno de teclas (estilo Material con bordes): se dibuja en código para que no lo tiña el filtro de color
+    private final boolean mDrawKeyOutline;
+    private final Paint mOutlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final RectF mOutlineRect = new RectF();
+    private final float mOutlineRadius;
 
     public KeyboardView(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.attr.keyboardViewStyle);
@@ -106,6 +112,13 @@ public class KeyboardView extends View {
     public KeyboardView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         mColors = Settings.getValues().mColors;
+        final float density = context.getResources().getDisplayMetrics().density;
+        mOutlinePaint.setStyle(Paint.Style.STROKE);
+        mOutlinePaint.setColor(0xFF78858F);
+        mOutlinePaint.setStrokeWidth(1.5f * density);
+        mOutlineRadius = 8f * density;
+        mDrawKeyOutline = KeyboardTheme.getKeyboardTheme(context).mStyleId == R.style.KeyboardTheme_LXX_Base_Border
+                && !(this instanceof MoreSuggestionsView) && !(this instanceof PopupKeysKeyboardView);
 
         final TypedArray keyboardViewAttr = context.obtainStyledAttributes(attrs,
                 R.styleable.KeyboardView, defStyle, R.style.KeyboardView);
@@ -372,6 +385,11 @@ public class KeyboardView extends View {
         background.setBounds(0, 0, bgWidth, bgHeight);
         canvas.translate(bgX, bgY);
         background.draw(canvas);
+        if (mDrawKeyOutline) {
+            final float half = mOutlinePaint.getStrokeWidth() / 2f;
+            mOutlineRect.set(half, half, bgWidth - half, bgHeight - half);
+            canvas.drawRoundRect(mOutlineRect, mOutlineRadius, mOutlineRadius, mOutlinePaint);
+        }
         canvas.translate(-bgX, -bgY);
     }
 
