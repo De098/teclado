@@ -1575,7 +1575,23 @@ public class LatinIME extends InputMethodService implements
             // «Deshacer»/«Rehacer» del borrado tiene prioridad sobre la sugerencia de portapapeles
             final View undoView = LayoutInflater.from(this).inflate(R.layout.clipboard_suggestion, mSuggestionStripView, false);
             final TextView undoText = undoView.findViewById(R.id.clipboard_suggestion_text);
-            undoText.setText(mInputLogic.isUndoDeleteRedoState() ? R.string.redo_delete : R.string.undo_delete);
+            final boolean redo = mInputLogic.isUndoDeleteRedoState();
+            undoText.setText(redo ? R.string.redo_delete : R.string.undo_delete);
+            // Mismo aspecto que las teclas: Nunito, color de texto de tecla, flecha delante y contorno gris
+            helium314.keyboard.keyboard.KeyboardTypeface.INSTANCE.applyToTextView(undoText);
+            undoText.setTypeface(undoText.getTypeface(), android.graphics.Typeface.NORMAL);
+            undoText.setTextColor(mSettings.getCurrent().mColors.get(ColorType.KEY_TEXT));
+            final android.graphics.drawable.Drawable undoIcon =
+                    KeyboardIconsSet.Companion.getInstance().getIconDrawable(redo ? "redo" : "undo");
+            if (undoIcon != null) {
+                undoIcon.mutate();
+                undoIcon.setBounds(0, 0, undoText.getLineHeight(), undoText.getLineHeight());
+                mSettings.getCurrent().mColors.setColor(undoIcon, ColorType.KEY_TEXT);
+                undoText.setCompoundDrawablesRelative(undoIcon, null, null, null);
+                undoText.setCompoundDrawablePadding(Math.round(6 * getResources().getDisplayMetrics().density));
+            }
+            undoView.findViewById(R.id.clipboard_suggestion_close).setVisibility(View.GONE);
+            undoView.setBackgroundResource(R.drawable.undo_suggestion_background);
             undoText.setOnClickListener(v -> {
                 mInputLogic.onUndoDeleteClicked();
                 setNeutralSuggestionStrip();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo de «Deshacer»/«Rehacer»: como una tecla (blanca, contorno gris 1,5 dp, radio 8 dp) -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#14000000">
+    <item
+        android:bottom="6dp"
+        android:left="4dp"
+        android:right="4dp"
+        android:top="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp"/>
+            <stroke android:color="#78858f" android:width="1.5dp"/>
+            <solid android:color="#FFFFFFFF"/>
+        </shape>
+    </item>
+</ripple>
