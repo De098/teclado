@@ -10,6 +10,7 @@ import helium314.keyboard.keyboard.internal.keyboard_parser.floris.CharWidthSele
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.KanaSelector
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.KeyData
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.KeyboardStateSelector
+import helium314.keyboard.keyboard.internal.keyboard_parser.floris.KeySideSelector
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.LayoutDirectionSelector
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.MultiTextKeyData
 import helium314.keyboard.keyboard.internal.keyboard_parser.floris.ShiftStateSelector
