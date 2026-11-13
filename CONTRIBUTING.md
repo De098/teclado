@@ -78,7 +78,7 @@ Your PR should:
 - **Be only about a single thing**. Mixing unrelated or semi-related contributions into a single PR is hard to review and can get messy. As a general rule: if one part doesn't need the other one(s), it should be separate PRs. If one feature builds on top of another one, but the base is usable on its own, do a PR for the base and then a follow-up once it's merged.
 - **Have a proper description**. A good description helps _a lot_ for understanding what you intend to achieve with the changes, and for understanding the code. This is relevant for separating wanted from unintended changes in behavior during review.
 - **Not contain translations**. Translations should be done using [Weblate](https://translate.codeberg.org/projects/heliboard/). Exception is when you add new resource strings, those can be added right away.
-- **Not be LLM generated**. LLMs enable contributors to quickly generate code that often is bulky and contains parts that are hard to understand. When the you do not understand the code, it's not possible to discuss such parts. See also [AI_USAGE.md](AI_USAGE.md).
+- **Not be LLM generated**. LLMs enable contributors to quickly generate code that often is bulky and contains parts that are hard to understand. When the you do not understand the code, it's not possible to discuss such parts.
 - **Not contain LLM generated discussion / description**. LLMs typically generate verbose and useless descriptions. Please save us some time and write it yourself, otherwise actual discussion is impossible.
 
 Please leave dependency upgrades to the maintainers, unless you state a good reason why they should be done now.
