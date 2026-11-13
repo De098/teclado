@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 import helium314.keyboard.keyboard.KeyboardId
 import helium314.keyboard.keyboard.KeyboardMode
 import helium314.keyboard.keyboard.internal.KeyboardParams
+import helium314.keyboard.latin.settings.Settings
 
 // taken from FlorisBoard, small modifications
 //  popup not nullable (maybe change back, but currently that's necessary for number keys)
@@ -241,6 +242,31 @@ class KeyboardStateSelector(
     override fun asString(isForDisplay: Boolean): String {
         return ""
     }
+}
+
+/**
+ * Muestra [data] solo si la tecla [key] («numpad» o «dpad») está ajustada para salir en el lado [side]
+ * («left» o «right») del espacio. Así cada persona elige dónde quiere esas teclas en la pantalla de símbolos.
+ * Identificador JSON: `key_side_selector`.
+ */
+@Serializable
+@SerialName("key_side_selector")
+class KeySideSelector(
+    val key: String,
+    val side: String,
+    val data: AbstractKeyData? = null,
+) : AbstractKeyData {
+    override fun compute(params: KeyboardParams, isPopup: Boolean): KeyData? {
+        val values = Settings.getValues()
+        val current = when (key) {
+            "numpad" -> values.mNumpadKeySide
+            "dpad" -> values.mDpadKeySide
+            else -> side
+        }
+        return if (current == side) data?.compute(params, isPopup) else null
+    }
+
+    override fun asString(isForDisplay: Boolean): String = ""
 }
 
 /**

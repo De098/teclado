@@ -75,6 +75,9 @@ fun PreferencesScreen(
         Settings.PREF_LANGUAGE_SWITCH_KEY,
         Settings.PREF_SHOW_EMOJI_KEY,
         Settings.PREF_SHOW_DPAD_KEY,
+        Settings.PREF_NUMPAD_KEY_SIDE,
+        if (prefs.getBoolean(Settings.PREF_SHOW_DPAD_KEY, Defaults.PREF_SHOW_DPAD_KEY))
+            Settings.PREF_DPAD_KEY_SIDE else null,
         Settings.PREF_REMOVE_REDUNDANT_POPUPS,
         R.string.settings_category_clipboard_history,
         Settings.PREF_ENABLE_CLIPBOARD_HISTORY,
@@ -162,6 +165,21 @@ fun createPreferencesSettings(context: Context) = listOf(
     },
     Setting(context, Settings.PREF_SHOW_DPAD_KEY, R.string.show_dpad_key) {
         SwitchPreference(it, Defaults.PREF_SHOW_DPAD_KEY) { KeyboardSwitcher.getInstance().reloadKeyboard() }
+    },
+    // Lado del espacio en el que salen las teclas extra de la pantalla de símbolos
+    Setting(context, Settings.PREF_NUMPAD_KEY_SIDE, R.string.numpad_key_side) {
+        ListPreference(
+            it,
+            listOf(stringResource(R.string.key_side_left) to "left", stringResource(R.string.key_side_right) to "right"),
+            Defaults.PREF_NUMPAD_KEY_SIDE
+        ) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
+    },
+    Setting(context, Settings.PREF_DPAD_KEY_SIDE, R.string.dpad_key_side) {
+        ListPreference(
+            it,
+            listOf(stringResource(R.string.key_side_left) to "left", stringResource(R.string.key_side_right) to "right"),
+            Defaults.PREF_DPAD_KEY_SIDE
+        ) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
     },
     Setting(context, Settings.PREF_REMOVE_REDUNDANT_POPUPS,
         R.string.remove_redundant_popups, R.string.remove_redundant_popups_summary)
