@@ -31,7 +31,3 @@ El icono original de HeliBoard tiene licencia [Creative Commons BY-SA 4.0](https
 - [Simple Keyboard](https://github.com/rkkr/simple-keyboard)
 - [Indic Keyboard](https://gitlab.com/indicproject/indic-keyboard)
 - [FlorisBoard](https://github.com/florisboard/florisboard/)
-
-### Financiación (HeliBoard)
-
-HeliBoard está financiado por el [NGI Mobifree Fund](https://nlnet.nl/mobifree), un fondo creado por [NLnet](https://nlnet.nl) con apoyo económico del programa [Next Generation Internet](https://ngi.eu) de la Comisión Europea. Más información en la [página del proyecto en NLnet](https://nlnet.nl/project/GestureTyping).
