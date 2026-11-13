@@ -25,6 +25,8 @@ import android.os.Process;
 import android.util.PrintWriterPrinter;
 import android.util.Printer;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.widget.TextView;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.CompletionInfo;
@@ -853,6 +855,7 @@ public class LatinIME extends InputMethodService implements
 
     private void onStartInputInternal(EditorInfo editorInfo, boolean restarting) {
         super.onStartInput(editorInfo, restarting);
+        mInputLogic.clearUndoDelete();
 
         RichInputMethodSubtype subtypeForApp = editorInfo == null
             ? null :
@@ -1044,6 +1047,7 @@ public class LatinIME extends InputMethodService implements
         Log.i(TAG, "onFinishInput");
 
         mDictionaryFacilitator.onFinishInput();
+        mInputLogic.clearUndoDelete();
         final MainKeyboardView mainKeyboardView = mKeyboardSwitcher.getMainKeyboardView();
         if (mainKeyboardView != null) {
             mainKeyboardView.closing();
@@ -1567,6 +1571,18 @@ public class LatinIME extends InputMethodService implements
      */
     public boolean tryShowClipboardSuggestion() {
         if (!hasSuggestionStripView()) return false;
+        if (mInputLogic.hasUndoDeleteState()) {
+            // «Deshacer»/«Rehacer» del borrado tiene prioridad sobre la sugerencia de portapapeles
+            final View undoView = LayoutInflater.from(this).inflate(R.layout.clipboard_suggestion, mSuggestionStripView, false);
+            final TextView undoText = undoView.findViewById(R.id.clipboard_suggestion_text);
+            undoText.setText(mInputLogic.isUndoDeleteRedoState() ? R.string.redo_delete : R.string.undo_delete);
+            undoText.setOnClickListener(v -> {
+                mInputLogic.onUndoDeleteClicked();
+                setNeutralSuggestionStrip();
+            });
+            mSuggestionStripView.setExternalSuggestionView(undoView, false);
+            return true;
+        }
         View clipboardView = mClipboardHistoryManager.getClipboardSuggestionView(getCurrentInputEditorInfo(), mSuggestionStripView);
         if (clipboardView != null) {
             mSuggestionStripView.setExternalSuggestionView(clipboardView, false);

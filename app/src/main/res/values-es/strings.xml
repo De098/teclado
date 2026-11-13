@@ -554,4 +554,6 @@
     <string name="recent_emojis_cleared">Borrados los emojis recientes</string>
     <string name="prefs_enable_hardware_keyboard">Compatibilidad con teclado físico</string>
     <string name="accent_shifted_icon">Icono de mayúsculas resaltado</string>
+    <string name="undo_delete">Deshacer</string>
+    <string name="redo_delete">Rehacer</string>
 </resources>

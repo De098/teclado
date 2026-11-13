@@ -1318,5 +1318,8 @@ New dictionary:
      string will probably be removed once data gathering is finished (end of 2026 latest) -->
     <string name="gesture_data_swipe_o_scope">Tool for visualizing gesture data: &lt;a href=%s&gt;Swipe-O-Scope&lt;/a&gt;</string>
 
+    <string name="undo_delete">Undo</string>
+    <string name="redo_delete">Redo</string>
+
     <!-- new strings should go above the section for gesture data gathering -->
 </resources>

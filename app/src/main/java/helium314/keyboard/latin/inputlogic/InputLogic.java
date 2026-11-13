@@ -237,6 +237,7 @@ public final class InputLogic {
      * @return the complete transaction object
      */
     public InputTransaction onTextInput(SettingsValues settingsValues, Event event, CapsMode keyboardCapsMode, LatinIME.UIHandler handler) {
+        clearUndoDelete();
         String rawText = event.getTextToCommit().toString();
         InputTransaction inputTransaction = new InputTransaction(settingsValues, event,
                 SystemClock.uptimeMillis(), mSpaceState,
@@ -492,6 +493,7 @@ public final class InputLogic {
             CapsMode keyboardCapsMode, String currentKeyboardScript, LatinIME.UIHandler handler) {
         mWordBeingCorrectedByCursor = null;
         mJustRevertedACommit = false;
+        if (event.getKeyCode() != KeyCode.DELETE) clearUndoDelete();
 
         if (GestureDataGatheringKt.useBackgroundGathering && mConnection.hasSelection())
             BackgroundGatheringCache.INSTANCE.onEditSelection(mConnection.getSelectedText(0), mConnection.getTextBeforeCursor(40, 0), mConnection.getTextAfterCursor(40, 0));
@@ -713,6 +715,69 @@ public final class InputLogic {
         }
     }
 
+    // --- «Deshacer»/«Rehacer» tras vaciar el campo con la tecla de borrar (como Gboard) ---
+    /** Texto del campo al empezar la racha de borrado actual (null si no hay racha). */
+    private String mDeleteRunText = null;
+    /** Texto guardado cuando el campo quedó vacío por borrar (null si no hay «Deshacer»). */
+    private String mUndoDeleteText = null;
+    /** true si el texto está ya restaurado y el botón muestra «Rehacer». */
+    private boolean mUndoDeleteRestored = false;
+
+    public boolean hasUndoDeleteState() { return mUndoDeleteText != null; }
+    public boolean isUndoDeleteRedoState() { return mUndoDeleteRestored; }
+
+    public void clearUndoDelete() {
+        mDeleteRunText = null;
+        mUndoDeleteText = null;
+        mUndoDeleteRestored = false;
+    }
+
+    /** Devuelve el texto completo actual del campo, o null si es contraseña o no se puede leer. */
+    private String getUndoDeleteTextOrNull() {
+        final android.view.inputmethod.EditorInfo ei = mLatinIME.getCurrentInputEditorInfo();
+        if (ei == null || InputTypeUtils.isPasswordInputType(ei.inputType)) return null;
+        if (mUndoDeleteRestored) clearUndoDelete(); // borrar tras «Deshacer» descarta el estado
+        if (mUndoDeleteText != null) return null;
+        final CharSequence before = mConnection.getTextBeforeCursor(10000, 0);
+        final CharSequence after = mConnection.getTextAfterCursor(10000, 0);
+        if (before == null || after == null) return null;
+        return before.toString() + after;
+    }
+
+    private void checkUndoDeleteAfterBackspace(final String textBeforeDelete) {
+        if (textBeforeDelete == null) return;
+        if (mDeleteRunText == null || !mDeleteRunText.startsWith(textBeforeDelete)
+                && !textBeforeDelete.startsWith(mDeleteRunText)) {
+            mDeleteRunText = textBeforeDelete;
+        } else if (textBeforeDelete.length() > mDeleteRunText.length()) {
+            mDeleteRunText = textBeforeDelete;
+        }
+        if (mDeleteRunText.isEmpty()) return;
+        final CharSequence before = mConnection.getTextBeforeCursor(1, 0);
+        final CharSequence after = mConnection.getTextAfterCursor(1, 0);
+        if (before != null && after != null && before.length() == 0 && after.length() == 0) {
+            mUndoDeleteText = mDeleteRunText;
+            mUndoDeleteRestored = false;
+            mDeleteRunText = null;
+            mSuggestionStripViewAccessor.setNeutralSuggestionStrip();
+        }
+    }
+
+    /** Pulsación de «Deshacer» (reescribe el texto) o «Rehacer» (lo vuelve a borrar). */
+    public void onUndoDeleteClicked() {
+        if (mUndoDeleteText == null) return;
+        mConnection.beginBatchEdit();
+        resetComposingState(true);
+        if (!mUndoDeleteRestored) {
+            mConnection.commitText(mUndoDeleteText, 1);
+            mUndoDeleteRestored = true;
+        } else {
+            mConnection.deleteTextBeforeCursor(mUndoDeleteText.length());
+            mUndoDeleteRestored = false;
+        }
+        mConnection.endBatchEdit();
+    }
+
     /**
      * Handle a functional key event.
      * <p>
@@ -733,7 +798,9 @@ public final class InputLogic {
         }
         switch (keyCode) {
             case KeyCode.DELETE:
+                final String textBeforeDelete = getUndoDeleteTextOrNull();
                 handleBackspaceEvent(event, inputTransaction, currentKeyboardScript);
+                checkUndoDeleteAfterBackspace(textBeforeDelete);
                 // Backspace is a functional key, but it affects the contents of the editor.
                 inputTransaction.setDidAffectContents();
                 break;
@@ -1798,7 +1865,9 @@ public final class InputLogic {
                 Constants.GET_SUGGESTED_WORDS_TIMEOUT);
         if (suggestedWords != null) {
             // Prefer clipboard suggestions (if available and setting is enabled) over beginning of sentence predictions.
-            if (!(suggestedWords.mInputStyle == SuggestedWords.INPUT_STYLE_BEGINNING_OF_SENTENCE_PREDICTION
+            if (hasUndoDeleteState()) {
+                mLatinIME.tryShowClipboardSuggestion(); // muestra «Deshacer»/«Rehacer»
+            } else if (!(suggestedWords.mInputStyle == SuggestedWords.INPUT_STYLE_BEGINNING_OF_SENTENCE_PREDICTION
                     && mLatinIME.tryShowClipboardSuggestion())) {
                 mSuggestionStripViewAccessor.setSuggestions(suggestedWords);
             }
